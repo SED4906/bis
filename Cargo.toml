@@ -1,0 +1,8 @@
+[workspace]
+resolver = "3"
+members = [ "synth", "frontend" , "tailmaw"]
+
+[profile.release]
+opt-level = "z"
+lto = true
+strip = true
