@@ -1,0 +1,1 @@
+missing.jxl - Sea shells on HaBonim Beach, Israel. Much like the cave pearls in Unreal Engine, or the magenta-black checkerboard in Source Engine, it sticks out like a sore thumb. No self-respecting game developer uses placeholder textures that could be mistaken for finished art.

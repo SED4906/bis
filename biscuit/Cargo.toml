@@ -1,10 +1,11 @@
 [package]
-name = "frontend"
+name = "biscuit"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 mlua = {version = "0", features = ["luau"]}
-sdl3 = "0"
 
-synth = {path = "../synth"}
+
+[lints.clippy]
+pedantic = "warn"
