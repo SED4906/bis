@@ -1,4 +1,4 @@
-use crate::math::{Cross, Quaternion, Vector, quaternion::Vector3};
+use crate::math::{Quaternion, Vector, Vector3};
 
 pub struct OrientedCube {
     // Center of the cube
@@ -14,13 +14,13 @@ pub fn cube_cube(c1: OrientedCube, c2: OrientedCube) -> bool {
         return false;
     }
     // If so, use the Separating Axis Theorem to check intersection.
-    let mut axes = [Vector::new(); 15];
-    axes[0] = Vector::from([1.0, 0.0, 0.0]).rotate(c1.rotation);
-    axes[1] = Vector::from([0.0, 1.0, 0.0]).rotate(c1.rotation);
-    axes[2] = Vector::from([0.0, 0.0, 1.0]).rotate(c1.rotation);
-    axes[3] = Vector::from([1.0, 0.0, 0.0]).rotate(c2.rotation);
-    axes[4] = Vector::from([0.0, 1.0, 0.0]).rotate(c2.rotation);
-    axes[5] = Vector::from([0.0, 0.0, 1.0]).rotate(c2.rotation);
+    let mut axes = [Vector::default(); 15];
+    axes[0] = Vector::new([1.0, 0.0, 0.0]).rotate(c1.rotation);
+    axes[1] = Vector::new([0.0, 1.0, 0.0]).rotate(c1.rotation);
+    axes[2] = Vector::new([0.0, 0.0, 1.0]).rotate(c1.rotation);
+    axes[3] = Vector::new([1.0, 0.0, 0.0]).rotate(c2.rotation);
+    axes[4] = Vector::new([0.0, 1.0, 0.0]).rotate(c2.rotation);
+    axes[5] = Vector::new([0.0, 0.0, 1.0]).rotate(c2.rotation);
     axes[6] = axes[0].cross(axes[3]);
     axes[7] = axes[0].cross(axes[4]);
     axes[8] = axes[0].cross(axes[5]);

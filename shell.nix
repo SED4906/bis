@@ -3,6 +3,7 @@ with import <nixpkgs> {}; {
     name = "build-environment-bis";
     buildInputs = [
         rustup
+        rust-analyzer
         sdl3
     ];
   };

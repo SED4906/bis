@@ -11,13 +11,15 @@ pub struct Vector<const N: usize, T> {
 
 pub type Scalar<T> = Vector<1, T>;
 
-pub trait Cross {
-    fn cross(self, other: Self) -> Self;
+impl<const N: usize, T: Copy + Default> Vector<N, T> {
+    pub const fn new(values: [T; N]) -> Self {
+        Vector { values }
+    }
 }
 
-impl<const N: usize, T: Copy + Default> Vector<N, T> {
-    pub fn new() -> Self {
-        Vector {
+impl<const N: usize, T: Copy + Default> Default for Vector<N, T> {
+    fn default() -> Self {
+        Self {
             values: [T::default(); N],
         }
     }
@@ -106,7 +108,7 @@ impl<const N: usize, T: Copy> W<T> for Vector<N, T> {
         panic!("Vector has too few elements")
     };
     fn w(&self) -> T {
-        let _ = <Self as Z<T>>::VALID;
+        let _ = <Self as W<T>>::VALID;
         self.values[3]
     }
 }
@@ -143,7 +145,7 @@ impl<const N: usize, T: Add<Output = T> + Copy + Default> Add for Vector<N, T> {
     type Output = Vector<N, T>;
 
     fn add(self, rhs: Self) -> Self::Output {
-        let mut result = Self::Output::new();
+        let mut result = Self::Output::default();
         for (i, (left, right)) in zip(self.values, rhs.values).enumerate() {
             result.values[i] = left + right;
         }
@@ -163,7 +165,7 @@ impl<const N: usize, T: Sub<Output = T> + Copy + Default> Sub for Vector<N, T> {
     type Output = Vector<N, T>;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        let mut result = Self::Output::new();
+        let mut result = Self::Output::default();
         for (i, (left, right)) in zip(self.values, rhs.values).enumerate() {
             result.values[i] = left - right;
         }
@@ -192,10 +194,10 @@ impl<const N: usize, T: Add<Output = T> + Mul<Output = T> + Default> Mul for Vec
     }
 }
 
-impl<T: Sub<Output = T> + Mul<Output = T> + Copy + Default> Cross for Vector<3, T> {
+impl<T: Sub<Output = T> + Mul<Output = T> + Copy + Default> Vector<3, T> {
     /// Cross product
-    fn cross(self, rhs: Self) -> Self {
-        let mut result = Self::new();
+    pub fn cross(self, rhs: Self) -> Self {
+        let mut result = Self::default();
         result.values[0] = self.values[1] * rhs.values[2] - self.values[2] * rhs.values[1];
         result.values[1] = self.values[2] * rhs.values[0] - self.values[0] * rhs.values[2];
         result.values[2] = self.values[0] * rhs.values[1] - self.values[1] * rhs.values[0];
@@ -207,7 +209,7 @@ impl<const N: usize, T: Mul<Output = T> + Copy + Default> Mul<T> for Vector<N, T
     type Output = Vector<N, T>;
 
     fn mul(self, rhs: T) -> Self::Output {
-        let mut result = Self::Output::new();
+        let mut result = Self::Output::default();
         for (i, value) in self.values.iter().enumerate() {
             result.values[i] = *value * rhs;
         }
@@ -227,6 +229,8 @@ impl<const N: usize, T: Neg<Output = T> + Copy + Default> Neg for Vector<N, T> {
     type Output = Vector<N, T>;
 
     fn neg(self) -> Self::Output {
-        Self { values: self.values.map(|s| -s) }
+        Self {
+            values: self.values.map(|s| -s),
+        }
     }
 }

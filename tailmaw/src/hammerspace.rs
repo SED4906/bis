@@ -6,7 +6,7 @@ use crate::model::Model;
 
 pub struct Hammerspace<'a> {
     textures: HashMap<String, Texture<'a>>,
-    models: HashMap<String, Model>,
+    models: HashMap<String, Model<'a>>,
     shaders: HashMap<String, Shader>
 }
 
@@ -23,7 +23,7 @@ impl Hammerspace<'_> {
         None
     }
 
-    pub fn model(&mut self, name: &str) -> Option<Model> {
+    pub fn model(&mut self, name: &str) -> Option<Model<'_>> {
         None
     }
 

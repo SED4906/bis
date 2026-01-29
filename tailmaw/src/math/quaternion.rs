@@ -1,12 +1,9 @@
-
 use std::ops::{Mul, Neg};
 
 use crate::math::{
-    Vector,
+    Vector, Vector3,
     vector::{X, Y, Z},
 };
-
-pub type Vector3 = Vector<3, f32>;
 
 #[derive(Clone, Copy)]
 pub struct Quaternion {
@@ -17,8 +14,8 @@ pub struct Quaternion {
 }
 
 impl Vector3 {
-    pub fn rotate(&self, q: Quaternion) -> Vector3 {
-        (-q * (*self).into() * q).into()
+    pub fn rotate(self, q: Quaternion) -> Vector3 {
+        (-q * self.into() * q).into()
     }
 }
 
@@ -35,7 +32,7 @@ impl From<Vector3> for Quaternion {
 
 impl From<Quaternion> for Vector3 {
     fn from(q: Quaternion) -> Self {
-        Vector3::from([q.x, q.y, q.z])
+        Vector::new([q.x, q.y, q.z])
     }
 }
 

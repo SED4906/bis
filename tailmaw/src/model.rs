@@ -1,16 +1,19 @@
-use crate::math::Vector;
+use sdl3::gpu::Texture;
 
-pub struct Model {
+use crate::math::{Vector2, Vector3};
+
+pub struct Model<'a> {
     mesh: Mesh,
+    textures: Vec<Texture<'a>>
 }
 
 pub struct Mesh {
     vertices: Vec<Vertex>,
-    triangles: Vec<Vector<3,u32>>,
+    indices: Vec<u32>,
 }
 
 pub struct Vertex {
-    position: Vector<3, f32>,
-    texture_coord: Vector<2, f32>,
+    position: Vector3,
+    texture_coord: Vector2,
     texture_index: u32,
 }
