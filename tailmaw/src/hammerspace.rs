@@ -20,14 +20,23 @@ impl Hammerspace<'_> {
     }
 
     pub fn texture(&mut self, name: &str) -> Option<Texture<'_>> {
+        if self.textures.contains_key(name) {
+            return self.textures.get(name).cloned();
+        }
         None
     }
 
     pub fn model(&mut self, name: &str) -> Option<Model<'_>> {
+        if self.models.contains_key(name) {
+            return self.models.get(name).cloned();
+        }
         None
     }
 
     pub fn shader(&mut self, name: &str) -> Option<Shader> {
+        if self.shaders.contains_key(name) {
+            return self.shaders.get(name).cloned();
+        }
         None
     }
 }
