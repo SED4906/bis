@@ -1,48 +1,29 @@
-use std::collections::HashMap;
+use image::DynamicImage;
+use jxl_oxide::integration::JxlDecoder;
+use sdl3::gpu::ShaderStage;
 
-use sdl3::gpu::{Shader, Texture};
+use crate::base::Engine;
 
-use crate::model::Model;
-
-pub struct Hammerspace<'a> {
-    textures: HashMap<String, Texture<'a>>,
-    models: HashMap<String, Model<'a>>,
-    shaders: HashMap<String, Shader>
-}
-
-impl Hammerspace<'_> {
-    pub fn new() -> Self {
-        Self {
-            textures: HashMap::new(),
-            models: HashMap::new(),
-            shaders: HashMap::new(),
-        }
-    }
-
-    pub fn texture(&mut self, name: &str) -> Option<Texture<'_>> {
-        if self.textures.contains_key(name) {
-            return self.textures.get(name).cloned();
+impl Engine {
+    pub(super) fn load_texture_data(&mut self, name: &str) -> Option<(Vec<u8>,u32,u32)> {
+        if name.is_empty() {
+            let jxl = JxlDecoder::new(&include_bytes!("../res/missing.jxl")[..]).expect("jxl decoder failed");
+            let img = DynamicImage::from_decoder(jxl).expect("image decode failed");
+            return Some((img.as_bytes().to_vec(),img.width(),img.height()));
         }
         None
     }
 
-    pub fn model(&mut self, name: &str) -> Option<Model<'_>> {
-        if self.models.contains_key(name) {
-            return self.models.get(name).cloned();
+    pub(super) fn load_shader_data(&mut self, name: &str) -> Option<(Vec<u8>, ShaderStage)> {
+        match name {
+            "default.vert.spv" => {
+                return Some((include_bytes!("../res/default.vert.spv").to_vec(), ShaderStage::Vertex));
+            }
+            "default.frag.spv" => {
+                return Some((include_bytes!("../res/default.frag.spv").to_vec(), ShaderStage::Fragment));
+            }
+            _ => {}
         }
         None
-    }
-
-    pub fn shader(&mut self, name: &str) -> Option<Shader> {
-        if self.shaders.contains_key(name) {
-            return self.shaders.get(name).cloned();
-        }
-        None
-    }
-}
-
-impl Default for Hammerspace<'_> {
-    fn default() -> Self {
-        Self::new()
     }
 }
