@@ -1,6 +1,6 @@
 use std::ops::{Mul, Neg};
 
-use crate::math::{
+use crate::geometry::space::{
     Vector, Vector3,
     vector::{X, Y, Z},
 };

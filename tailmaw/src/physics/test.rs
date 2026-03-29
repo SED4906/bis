@@ -1,5 +1,5 @@
 use crate::{
-    math::{Quaternion, Vector},
+    geometry::space::{Quaternion, Vector},
     physics::boxes::{OrientedCube, cube_cube},
 };
 

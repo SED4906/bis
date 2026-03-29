@@ -1,4 +1,4 @@
-use crate::math::{Quaternion, Vector, Vector3};
+use crate::geometry::space::{Quaternion, Vector, Vector3};
 
 pub struct OrientedCube {
     // Center of the cube

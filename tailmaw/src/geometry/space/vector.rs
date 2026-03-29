@@ -61,11 +61,19 @@ impl<const N: usize> Vector<N, f32> {
     pub fn mag(&self) -> f32 {
         self.mag2().sqrt()
     }
+
+    pub fn normalized(&self) -> Self {
+        *self * (1.0 / self.mag())
+    }
 }
 
 impl<const N: usize> Vector<N, f64> {
     pub fn mag(&self) -> f64 {
         self.mag2().sqrt()
+    }
+
+    pub fn normalized(&self) -> Self {
+        *self * (1.0 / self.mag())
     }
 }
 

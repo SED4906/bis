@@ -39,3 +39,11 @@ fn test_cross_product() {
     assert_eq!(x.cross(y), z);
     assert_eq!(y.cross(x), -z)
 }
+
+#[test]
+fn test_transpose() {
+    use super::Matrix;
+    let a: Matrix<3, 5, usize> = Matrix { values: [[0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14]] };
+    let a_t: Matrix<5, 3, usize> = Matrix { values: [[0,5,10],[1,6,11],[2,7,12],[3,8,13],[4,9,14]] };
+    assert_eq!(a.transpose(), a_t);
+}

@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use sdl3::gpu::{Buffer, Texture};
 
-use crate::math::{Vector2, Vector3};
+use crate::geometry::space::{Vector2, Vector3};
 
 #[derive(Clone)]
 pub struct Model {

@@ -30,6 +30,17 @@ impl<const M: usize, const N: usize, T: Copy> Matrix<M, N, T> {
     }
 }
 
+impl<const M: usize, const N: usize, T: Copy> Matrix<M, N, T> {
+    pub fn transpose(self) -> Matrix<N, M, T> {
+        let mut values = vec![];
+        for index in 0..N {
+            values.push(self.column(index).values);
+        }
+        let values = values.as_slice().try_into().unwrap();
+        Matrix { values }
+    }
+}
+
 impl<const M: usize, const N: usize, T> Index<(usize, usize)> for Matrix<M, N, T> {
     type Output = T;
 

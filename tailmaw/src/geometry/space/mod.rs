@@ -11,3 +11,4 @@ pub use quaternion::Quaternion;
 
 pub type Vector2 = Vector<2, f32>;
 pub type Vector3 = Vector<3, f32>;
+pub type Matrix4 = Matrix<4, 4, f32>;
