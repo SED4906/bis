@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["arcflash", "bartender", "biscuit", "orderstone", "tailmaw" , "weakforce"]
+members = ["arcflash", "bartender", "biscuit", "orderstone", "saddlepoint", "tailmaw", "weakforce"]
 
 [profile.release]
 opt-level = "z"

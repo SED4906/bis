@@ -12,12 +12,12 @@ pub struct Model {
 }
 
 #[derive(Clone)]
-pub struct LoaderModel {
-    pub mesh: Arc<Mesh>,
+pub struct Mesh {
+    pub mesh: Arc<MeshGeometry>,
     pub texture: Arc<String>,
 }
 
-pub struct Mesh {
+pub struct MeshGeometry {
     pub vertices: Vec<Vertex>,
     pub indices: Vec<u32>,
 }

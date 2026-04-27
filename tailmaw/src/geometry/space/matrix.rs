@@ -3,6 +3,8 @@ use std::{
     ops::{Add, Index, IndexMut, Mul, Sub},
 };
 
+use sdl3::libc::regex_t;
+
 use super::vector::Vector;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -213,5 +215,12 @@ impl<const N: usize, T: Copy + Default + Add<Output = T> + Sub<Output = T> + Mul
             result = result + product_add - product_sub;
         }
         result
+    }
+}
+
+impl Matrix<4, 4, f32>
+{
+    pub const fn identity() -> Matrix<4, 4, f32> {
+        Matrix { values: [[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]] }
     }
 }

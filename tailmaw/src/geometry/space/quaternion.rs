@@ -62,3 +62,11 @@ impl Neg for Quaternion {
         }
     }
 }
+
+impl Quaternion {
+    pub fn axis_angle(axis: Vector3, angle: f32) -> Self {
+        let mut result = Quaternion::from(axis.normalized() * angle.sin());
+        result.r = angle.cos();
+        result
+    }
+}

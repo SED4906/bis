@@ -63,6 +63,7 @@ impl<const N: usize> Vector<N, f32> {
     }
 
     pub fn normalized(&self) -> Self {
+        if self.mag2() == 0.0 {return *self;}
         *self * (1.0 / self.mag())
     }
 }
@@ -73,6 +74,7 @@ impl<const N: usize> Vector<N, f64> {
     }
 
     pub fn normalized(&self) -> Self {
+        if self.mag2() == 0.0 {return *self;}
         *self * (1.0 / self.mag())
     }
 }

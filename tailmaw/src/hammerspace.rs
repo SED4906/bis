@@ -4,7 +4,7 @@ use image::DynamicImage;
 use jxl_oxide::integration::JxlDecoder;
 use sdl3::{gpu::{BufferRegion, BufferUsageFlags, ColorTargetDescription, ComputePipeline, DepthStencilState, Device, GraphicsPipeline, GraphicsPipelineTargetInfo, RasterizerState, Sampler, SamplerCreateInfo, Shader, ShaderFormat, ShaderStage, Texture, TextureCreateInfo, TextureFormat, TextureRegion, TextureTransferInfo, TextureUsage, TransferBufferLocation, TransferBufferUsage, VertexAttribute, VertexBufferDescription, VertexInputState}, video::Window};
 
-use crate::{geometry::space::{Vector2, Vector3}, model::{LoaderModel, Mesh, Model, Vertex}};
+use crate::{formats::{vit::vit, vit2::vit2}, geometry::space::{Vector2, Vector3}, model::{Mesh, MeshGeometry, Model, Vertex}};
 
 pub struct Hammerspace {
     textures: HashMap<String, Texture<'static>>,
@@ -92,8 +92,10 @@ impl Hammerspace {
             return self.models.get(name).cloned();
         }
         let loader_model = match name {
-            "test_quad" => LoaderModel {
-                mesh: Mesh {
+            "quad" => vit2(include_bytes!("res/quad.vit2")).unwrap(),
+            "cube" => vit(include_str!("res/cube.vit")).unwrap(),
+            "test_quad" => Mesh {
+                mesh: MeshGeometry {
                     vertices: vec![
                         Vertex {
                             position: Vector3::new([-1.0, -1.0, 0.0]),
@@ -117,8 +119,8 @@ impl Hammerspace {
                 .into(),
                 texture: "".to_string().into(),
             },
-            "test_cube" => LoaderModel {
-                mesh: Mesh {
+            "test_cube" => Mesh {
+                mesh: MeshGeometry {
                     vertices: vec![
                         // +Z
                         Vertex {

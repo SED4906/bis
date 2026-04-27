@@ -1,11 +1,11 @@
-use std::{collections::HashMap, time::Instant};
+use std::{collections::{HashMap, HashSet}, time::Instant};
 
 use sdl3::{
     Sdl,
     event::Event,
     gpu::{
         BufferBinding, ColorTargetInfo, DepthStencilTargetInfo, Device, IndexElementSize, LoadOp,
-        ShaderFormat, StoreOp, TextureCreateInfo, TextureFormat, TextureSamplerBinding,
+        ShaderFormat, StoreOp, Texture, TextureCreateInfo, TextureFormat, TextureSamplerBinding,
         TextureUsage,
     },
     pixels::Color,
@@ -50,7 +50,9 @@ pub enum Component {
     Model {
         model: String,
         visible: bool,
-        texture_override: Option<String>,
+    },
+    TextureOverride {
+        texture: String,
     },
     Transformation {
         position: Vector3,
@@ -65,9 +67,13 @@ pub enum Component {
     },
     Reference {
         entity: u128,
-        camera: bool,
-        transformation: bool,
         model: bool,
+        texture_override: bool,
+        transformation: bool,
+        camera: bool,
+    },
+    Tags {
+        tags: HashSet<String>,
     },
 }
 
@@ -75,6 +81,7 @@ struct RenderStep {
     pub model: Model,
     pub transformation: Matrix4,
     pub camera: Matrix4,
+    pub texture_override: Option<Texture<'static>>,
 }
 
 const DEBUG_MODE: bool = true;
@@ -210,25 +217,28 @@ impl Engine {
         render_pass.bind_graphics_pipeline(&default_graphics_pipeline);
         let mut render_steps = vec![];
         for entity in self.entities.clone().keys() {
-            let mut render_model = None;
-            let mut render_camera = None;
-            let mut render_transformation = None;
-            let mut referenced = vec![*entity];
+            let mut model = None;
+            let mut camera = None;
+            let mut transformation = None;
+            let mut texture_override = None;
+            let mut referenced = vec![];
             self.render_step(
                 *entity,
-                &mut render_model,
-                &mut render_transformation,
-                &mut render_camera,
+                &mut model,
+                &mut transformation,
+                &mut camera,
+                &mut texture_override,
                 &mut referenced,
             );
-            if let Some(model) = render_model
-                && let Some(camera) = render_camera
-                && let Some(transformation) = render_transformation
+            if let Some(model) = model
+                && let Some(camera) = camera
+                && let Some(transformation) = transformation
             {
                 render_steps.push(RenderStep {
                     model,
                     transformation,
                     camera,
+                    texture_override,
                 });
             }
         }
@@ -236,7 +246,12 @@ impl Engine {
             render_pass.bind_fragment_samplers(
                 0,
                 &[TextureSamplerBinding::new()
-                    .with_texture(&render_step.model.texture)
+                    .with_texture(
+                        render_step
+                            .texture_override
+                            .as_ref()
+                            .unwrap_or(&render_step.model.texture),
+                    )
                     .with_sampler(&tiled_sampler)],
             );
             render_pass.bind_vertex_buffers(
@@ -273,26 +288,16 @@ impl Engine {
         render_model: &mut Option<Model>,
         render_transformation: &mut Option<Matrix4>,
         render_camera: &mut Option<Matrix4>,
-        referenced: &mut Vec<u128>,
+        render_texture_override: &mut Option<Texture<'static>>,
+        referenced: &mut Vec<(u128,u128)>,
     ) {
         let Some(components) = self.entities.get(&entity).cloned() else {
             return;
         };
-        for (_,component) in components {
+        for (_, component) in components {
             match component {
-                Component::Model {
-                    model,
-                    visible,
-                    texture_override,
-                } if visible => {
-                    let mut model = self.hammerspace.model(&self.device, &model).unwrap();
-                    if let Some(texture_override) = texture_override {
-                        model.texture = self
-                            .hammerspace
-                            .texture(&self.device, &texture_override)
-                            .unwrap();
-                    }
-                    *render_model = Some(model);
+                Component::Model { model, visible } if visible => {
+                    *render_model = self.hammerspace.model(&self.device, &model);
                 }
                 Component::Camera {
                     cam,
@@ -315,18 +320,26 @@ impl Engine {
                     rotation,
                     scale,
                 } => *render_transformation = Some(transformation(position, rotation, scale)),
+                Component::TextureOverride { texture } => {
+                    *render_texture_override = self.hammerspace.texture(&self.device, &texture)
+                }
                 Component::Reference {
-                    entity,
+                    entity: referenced_entity,
                     camera,
                     transformation,
                     model,
+                    texture_override,
                 } => {
-                    if !referenced.contains(&entity) {
-                        referenced.push(entity);
-                        let (mut dummy_model, mut dummy_transformation, mut dummy_camera) =
-                            (None, None, None);
+                    if !referenced.contains(&(referenced_entity, entity)) {
+                        referenced.push((referenced_entity, entity));
+                        let (
+                            mut dummy_model,
+                            mut dummy_transformation,
+                            mut dummy_camera,
+                            mut dummy_texture_override,
+                        ) = (None, None, None, None);
                         self.render_step(
-                            entity,
+                            referenced_entity,
                             if model {
                                 render_model
                             } else {
@@ -341,6 +354,11 @@ impl Engine {
                                 render_camera
                             } else {
                                 &mut dummy_camera
+                            },
+                            if texture_override {
+                                render_texture_override
+                            } else {
+                                &mut dummy_texture_override
                             },
                             referenced,
                         );
